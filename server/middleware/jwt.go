@@ -5,6 +5,8 @@ import (
 	"strings"
 	"time"
 
+	"avito-tech-spring-2025/dto"
+
 	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt/v5"
 )
@@ -17,7 +19,7 @@ type Claims struct {
 	jwt.RegisteredClaims
 }
 
-func GenerateToken(username, role string) (string, error) {
+func GenerateToken(username, role string) (string, *dto.Error) {
 	claims := Claims{
 		Username: username,
 		Role:     role,
@@ -29,7 +31,14 @@ func GenerateToken(username, role string) (string, error) {
 	}
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-	return token.SignedString(JwtSecret)
+	signedToken, err := token.SignedString(JwtSecret)
+	if err != nil {
+		return "", &dto.Error{
+			Code:    500,
+			Message: "Неудалось сгенерировать токен",
+		}
+	}
+	return signedToken, nil
 }
 
 func JWTMiddleware(allowedRoles ...string) gin.HandlerFunc {

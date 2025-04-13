@@ -1,10 +1,29 @@
 services:
   gin-server:
+    container_name: gin-server
     build:
-      context: .
-      dockerfile: Dockerfile
+      context: ./server
     ports:
       - "8080:8080"
+    networks:
+      - app-network
+    depends_on:
+      - postgres
+
+  postgres:
+    container_name: postgres
+    build:
+      context: ./db
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: 1234
+      POSTGRES_DB: db
+    # volumes:
+    #   - ./db/pgdata:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    networks:
+      - app-network
 
 networks:
   app-network:
