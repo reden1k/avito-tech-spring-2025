@@ -21,5 +21,5 @@ func main() {
 	r.POST("/receptions", handlers.Receptions)
 	r.POST("/products", handlers.Products)
 
-	r.Run(":8080") // Здесь мы указываем порт
+	r.Run(":8080")
 }
